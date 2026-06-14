@@ -6,30 +6,37 @@
   <title>AEGIS AI - Medical Research Aggregator</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  </style>
 </head>
-<body class="bg-[#09090b] text-slate-100 min-h-screen font-sans">
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans">
 
   <div class="flex h-screen overflow-hidden">
-    <aside class="w-80 border-r border-sky-950/20 bg-[#020205]/60 backdrop-blur-xl flex flex-col">
-      <div class="p-4 border-b border-sky-950/10 flex items-center justify-between">
-        <h2 class="text-xs font-bold uppercase tracking-wider text-sky-400">Source Research Papers</h2>
+    <aside class="w-80 border-r border-slate-200 bg-white flex flex-col">
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Source Research Papers</h2>
         <button id="btn-add-paper" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-sky-600/10 transition-all cursor-pointer">
           <i data-lucide="plus" class="w-3.5 h-3.5"></i>
           <span>Add Paper</span>
         </button>
       </div>
 
-      <div id="papers-list-container" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-container">
-        <div id="papers-empty-state" class="flex flex-col items-center justify-center text-center py-12 px-4 border-2 border-dashed border-sky-950/40 rounded-2xl bg-[#020205]/40">
-          <div class="w-12 h-12 rounded-full bg-sky-950/20 flex items-center justify-center mb-3">
-            <i data-lucide="book-open" class="w-6 h-6 text-sky-500/70"></i>
+      <div id="papers-list-container" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <div id="papers-empty-state" class="flex flex-col items-center justify-center text-center py-12 px-4 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
+          <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
+            <i data-lucide="book-open" class="w-6 h-6 text-slate-400"></i>
           </div>
-          <h3 class="text-sm font-semibold text-slate-300">No Research Papers Added</h3>
-          <p class="text-xs text-slate-500 max-w-xs mt-1">Add paper cards to start aggregate AI parsing.</p>
+          <h3 class="text-sm font-semibold text-slate-700">No Research Papers Added</h3>
+          <p class="text-xs text-slate-400 max-w-xs mt-1">Add paper cards to start aggregate AI parsing.</p>
         </div>
       </div>
 
-      <div class="p-4 border-t border-sky-950/10 bg-[#020205]/40">
+      <div class="p-4 border-t border-slate-100 bg-slate-50">
         <button id="btn-run-analysis" class="w-full py-3 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-sky-500/10 transition-all uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
           <i data-lucide="sparkles" class="w-4 h-4"></i>
           <span>Run Aggregation Analysis</span>
@@ -38,54 +45,53 @@
     </aside>
 
     <main class="flex-1 overflow-y-auto p-8 space-y-8">
-      <div class="p-6 bg-gradient-to-r from-sky-900/40 to-blue-900/20 border border-sky-500/10 rounded-2xl flex items-center justify-between">
+      <div class="p-6 bg-gradient-to-r from-sky-600 to-blue-700 border border-sky-500/10 rounded-2xl flex items-center justify-between text-white shadow-xl shadow-blue-900/10">
         <div>
           <h1 class="text-xl font-black tracking-tight">AEGIS Meta-Analysis Terminal</h1>
-          <p class="text-xs text-slate-400 mt-0.5">Real-time aggregate semantic mapping matrix.</p>
+          <p class="text-xs text-sky-100 mt-0.5">Real-time aggregate semantic mapping matrix.</p>
         </div>
         <div class="text-right">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400 block mb-1">Total Aggregate Cohort</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-sky-200 block mb-1">Total Aggregate Cohort</span>
           <span id="total-cohort-value" class="text-4xl font-black text-white font-mono">0</span>
-          <span class="text-xs text-slate-400 font-medium ml-1">participants</span>
+          <span class="text-xs text-sky-100 font-medium ml-1">participants</span>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="p-6 bg-[#020205]/40 border border-sky-950/40 rounded-2xl relative space-y-4">
+        <div class="glass-panel p-6 border border-slate-200 rounded-2xl shadow-md relative space-y-4">
           <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
-          <h3 class="text-sm font-bold flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Consensus Summary</h3>
-          <p id="consensus-summary-text" class="text-xs text-slate-400 leading-relaxed italic">No consensus points computed yet. Ensure studies are analyzed.</p>
+          <h3 class="text-sm font-bold flex items-center gap-2 text-slate-800"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Consensus Summary</h3>
+          <p id="consensus-summary-text" class="text-xs text-slate-600 leading-relaxed italic">No consensus points computed yet. Ensure studies are analyzed.</p>
         </div>
 
-        <div class="p-6 bg-[#020205]/40 border border-sky-950/40 rounded-2xl relative space-y-4">
+        <div class="glass-panel p-6 border border-slate-200 rounded-2xl shadow-md relative space-y-4">
           <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-400 to-orange-500"></div>
-          <h3 class="text-sm font-bold flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i> Discrepancy Summary</h3>
-          <p id="discrepancy-summary-text" class="text-xs text-slate-400 leading-relaxed italic">No conflicting parameters identified yet.</p>
+          <h3 class="text-sm font-bold flex items-center gap-2 text-slate-800"><i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i> Discrepancy Summary</h3>
+          <p id="discrepancy-summary-text" class="text-xs text-slate-600 leading-relaxed italic">No conflicting parameters identified yet.</p>
         </div>
       </div>
 
-      <div class="p-6 bg-[#020205]/40 border border-sky-950/40 rounded-2xl relative space-y-4">
+      <div class="glass-panel p-6 border border-slate-200 rounded-2xl shadow-md relative space-y-4">
         <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-violet-500"></div>
-        <h3 class="text-sm font-bold flex items-center gap-2"><i data-lucide="microscope" class="w-4 h-4 text-indigo-400"></i> Limitations & Future Directions</h3>
-        <p id="limitations-future-text" class="text-xs text-slate-400 leading-relaxed italic">No research papers analyzed yet. Run analysis to map future insights.</p>
+        <h3 class="text-sm font-bold flex items-center gap-2 text-slate-800"><i data-lucide="microscope" class="w-4 h-4 text-indigo-500"></i> Limitations & Future Directions</h3>
+        <p id="limitations-future-text" class="text-xs text-slate-600 leading-relaxed italic">No research papers analyzed yet. Run analysis to map future insights.</p>
       </div>
     </main>
   </div>
 
-  <div id="processing-overlay" class="fixed inset-0 bg-[#020205]/95 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden">
+  <div id="processing-overlay" class="fixed inset-0 bg-white/90 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden">
     <div class="max-w-md w-full px-6 text-center space-y-4">
-      <div class="w-16 h-16 rounded-full border-4 border-sky-950 border-t-sky-500 animate-spin inline-flex items-center justify-center">
-        <i data-lucide="brain" class="w-6 h-6 text-sky-400 animate-pulse"></i>
+      <div class="w-16 h-16 rounded-full border-4 border-slate-200 border-t-sky-500 animate-spin inline-flex items-center justify-center">
+        <i data-lucide="brain" class="w-6 h-6 text-sky-500 animate-pulse"></i>
       </div>
       <div>
-        <h3 class="text-md font-bold text-white">AEGIS Neural Aggregator</h3>
+        <h3 class="text-md font-bold text-slate-900">AEGIS Neural Aggregator</h3>
         <p class="text-xs text-slate-500 font-mono mt-1">Parsing multi-study abstract layers...</p>
       </div>
     </div>
   </div>
 
   <script>
-    // Initialize icons immediately
     lucide.createIcons();
     
     // Handlers for Add/Remove Papers
@@ -96,15 +102,15 @@
         if (emptyState) emptyState.classList.add('hidden');
         
         const paperCard = document.createElement('div');
-        paperCard.className = "p-4 bg-slate-900/60 border border-sky-950/40 rounded-2xl relative space-y-3";
+        paperCard.className = "p-4 bg-slate-50 border border-slate-200 rounded-2xl relative space-y-3";
         paperCard.innerHTML = `
             <div class="flex items-center justify-between">
-                <span class="text-[10px] font-bold text-sky-500 uppercase tracking-wider">Research Abstract</span>
-                <button class="text-slate-500 hover:text-rose-400 remove-paper-btn transition-colors cursor-pointer p-1">
+                <span class="text-[10px] font-bold text-sky-600 uppercase tracking-wider">Research Abstract</span>
+                <button class="text-slate-400 hover:text-rose-500 remove-paper-btn transition-colors cursor-pointer p-1">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            <textarea class="w-full h-36 p-3 bg-[#020205]/60 border border-sky-950/40 rounded-xl text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/20 transition-all paper-input resize-none" placeholder="Paste full-text study or abstract here..."></textarea>
+            <textarea class="w-full h-36 p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-sky-500 transition-all paper-input resize-none" placeholder="Paste full-text study or abstract here..."></textarea>
         `;
         
         listContainer.appendChild(paperCard);

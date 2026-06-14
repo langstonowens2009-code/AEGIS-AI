@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-white text-slate-800">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS AI | Premium Research Aggregator</title>
+  
+  <!-- Tailwind CSS v4 Browser Build -->
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  
+  <!-- Google Fonts: Outfit (Header) & Inter (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons Library for Premium Visuals -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- PDF.js and JSZip for client-side PDF & DOCX file text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  
+  <!-- Custom Styling overrides -->
+  <link rel="stylesheet" href="index.css?v=1.0.4">
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col overflow-hidden text-slate-800 bg-grid-glow bg-white">
+
+  <!-- Glow effects behind panel workspace (Light Blue / Cyan Spotlights) -->
+  <div class="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] rounded-full bg-sky-500/5 blur-[150px] pointer-events-none"></div>
+  <div class="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] rounded-full bg-cyan-500/5 blur-[150px] pointer-events-none"></div>
+
+  <!-- Header / Navigation Bar -->
+  <header class="h-16 flex items-center justify-between px-6 border-b border-sky-950/40 bg-white/80 backdrop-blur-xl shrink-0 z-30">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 via-blue-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-sky-500/20">
+        <i data-lucide="shield-check" class="w-5 h-5 text-black"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-heading font-bold text-lg text-slate-900 tracking-wide">AEGIS AI</span>
+          <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 uppercase tracking-wider">Research Intel</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Analysis Status / Actions -->
+    <div class="flex items-center gap-4">
+      <div id="ai-status-indicator" class="hidden items-center gap-2 px-3 py-1.5 rounded-full bg-sky-950/30 border border-sky-900/30 text-xs text-sky-300">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+        </span>
+        <span id="ai-status-text">Idle</span>
+      </div>
+
+      <button id="btn-home" class="px-3.5 py-1.5 bg-white hover:bg-sky-100 border border-sky-200 hover:border-sky-300 text-sky-600 font-semibold rounded-xl text-xs flex items-center gap-1.5 transition-all cursor-pointer">
+        <i data-lucide="home" class="w-3.5 h-3.5"></i>
+        <span>Home</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Split Workspace Layout -->
+  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+
+    <!-- LEFT PANEL (35% width): Research Paper Workspace -->
+    <aside class="w-full lg:w-[35%] border-r border-sky-200 flex flex-col bg-white/85 backdrop-blur-xl h-1/2 lg:h-full shrink-0">
+      
+      <!-- Panel Header -->
+      <div class="p-5 border-b border-sky-950/30 bg-sky-950/5 flex items-center justify-between">
+        <div>
+          <h2 class="text-md font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="files" class="w-4.5 h-4.5 text-sky-400"></i>
+            Source Research Papers
+          </h2>
+          <p class="text-[11px] text-slate-500 mt-0.5">Manage and paste full-text studies below</p>
+        </div>
+        
+        <div class="flex items-center gap-1.5">
+          <!-- Dropdown/hidden triggers for file import -->
+          <input type="file" id="file-import-input" class="hidden" multiple accept=".pdf,.docx,.txt">
+          <button id="btn-import-files" title="Import PDF/DOCX" class="p-2 bg-sky-950/20 hover:bg-sky-900/20 border border-sky-800/30 rounded-xl text-slate-400 hover:text-white transition-all cursor-pointer">
+            <i data-lucide="file-up" class="w-4 h-4"></i>
+          </button>
+          
+          <button id="btn-add-paper" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-sky-600/10 transition-all cursor-pointer">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Add Paper</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrollable Papers List Container -->
+      <div id="papers-list-container" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-container">
+        <!-- JS generates paper cards here -->
+        
+        <!-- Empty State (No papers) -->
+        <div id="papers-empty-state" class="hidden flex-col items-center justify-center text-center py-12 px-4 border-2 border-dashed border-sky-950/40 rounded-2xl bg-[#020205]/40">
+          <div class="w-12 h-12 rounded-full bg-sky-950/20 flex items-center justify-center mb-3">
+            <i data-lucide="book-open" class="w-6 h-6 text-sky-500/70"></i>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-300">No Research Papers Added</h3>
+          <p class="text-xs text-slate-500 max-w-xs mt-1">Add paper cards or load sample templates from the top menu to start aggregate AI parsing.</p>
+        </div>
+      </div>
+
+      <!-- Action Button Area -->
+      <div class="p-4 border-t border-sky-950/30 bg-sky-950/5">
+        <button id="btn-analyze-all" class="w-full py-3.5 bg-gradient-to-r from-sky-500 via-blue-600 to-cyan-500 hover:opacity-90 active:scale-[0.99] text-white font-semibold rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/10 transition-all cursor-pointer">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Run Aggregation Analysis</span>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT PANEL (65% width): AI Analysis Dashboard -->
+    <main class="w-full lg:w-[65%] flex flex-col bg-white h-1/2 lg:h-full overflow-hidden">
+      
+      <!-- Big Top Card Metrics -->
+      <section class="bg-gradient-to-br from-sky-600 via-blue-700 to-indigo-800 text-white p-8 shrink-0 relative overflow-hidden shadow-md">
+        <div class="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"></div>
+        <div class="relative z-10 flex flex-col items-center justify-center text-center space-y-2">
+          <span class="text-xs font-bold text-sky-200 uppercase tracking-[0.2em]">Total Cohort (N)</span>
+          <div class="flex items-end gap-3 justify-center">
+            <span id="counter-cohort" class="text-6xl md:text-7xl font-black font-heading leading-none tracking-tight">0</span>
+            <span class="text-lg md:text-xl text-sky-200 font-medium mb-1.5">participants</span>
+          </div>
+          <div class="mt-4 pt-4 border-t border-white/20 inline-flex items-center gap-2">
+            <span class="text-xs text-sky-100/70 font-semibold uppercase tracking-wider">Across</span>
+            <span id="counter-papers" class="text-sm font-bold bg-white/20 px-2 py-0.5 rounded-md">0</span>
+            <span class="text-xs text-sky-100/70 font-semibold uppercase tracking-wider">Research Papers</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scrollable Dashboard Content -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-6 scroll-container bg-slate-50">
+
+        <!-- Top Alert Warnings / Success Status -->
+        <div id="dashboard-notice" class="p-4 rounded-xl border border-sky-200 bg-sky-50 flex items-start gap-3 shadow-sm">
+          <i data-lucide="info" class="w-5 h-5 text-sky-500 shrink-0 mt-0.5"></i>
+          <div class="text-xs text-slate-600 leading-relaxed">
+            <span class="text-slate-900 font-semibold">Real-Time Synthesis:</span> Paste full-text articles into cards on the left panel, input optional study parameters, and click "Run Aggregation Analysis". The system automatically processes clinical markers, study designs, sample sizes, and resolves disagreements using Gemini.
+          </div>
+        </div>
+
+        <!-- Two-Column Grid: Consensus & Discrepancies -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Consensus Findings Widget -->
+          <div class="glass-panel rounded-2xl border border-slate-200 shadow-md bg-white flex flex-col overflow-hidden relative">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
+            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
+                Consensus Summary
+              </h3>
+            </div>
+            <div class="p-6 flex-1 min-h-[160px]">
+              <p id="consensus-summary-text" class="text-sm text-slate-600 leading-relaxed italic">
+                No consensus points computed yet. Ensure studies are analyzed.
+              </p>
+            </div>
+          </div>
+
+          <!-- Conflicting Evidence Widget -->
+          <div class="glass-panel rounded-2xl border border-slate-200 shadow-md bg-white flex flex-col overflow-hidden relative">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-400 to-orange-500"></div>
+            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
+                Discrepancy Summary
+              </h3>
+            </div>
+            <div class="p-6 flex-1 min-h-[160px]">
+              <p id="discrepancy-summary-text" class="text-sm text-slate-600 leading-relaxed italic">
+                No conflicting parameters identified yet.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Width Bottom Card: Limitations & Future -->
+        <section class="glass-panel rounded-2xl border border-slate-200 shadow-md bg-white relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-400 to-violet-500"></div>
+          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+              <i data-lucide="microscope" class="w-4 h-4 text-indigo-500"></i>
+              Limitations & Future Directions
+            </h3>
+          </div>
+          <div class="p-6">
+            <p id="limitations-future-text" class="text-sm text-slate-700 leading-relaxed italic">
+              No research papers analyzed yet. Run analysis to generate limitations and future directions.
+            </p>
+          </div>
+        </section>
+
+
+
+
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Loading Overlay / Progress Tracker -->
+  <div id="processing-overlay" class="fixed inset-0 bg-white/90 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden">
+    <div class="max-w-md w-full px-6 text-center space-y-6">
+      
+      <!-- Premium circular loading bar -->
+      <div class="inline-flex relative items-center justify-center">
+        <!-- Outer glowing ring -->
+        <div class="w-20 h-20 rounded-full border-4 border-sky-950 border-t-sky-500 border-r-cyan-400 animate-spin"></div>
+        <i data-lucide="brain" class="w-8 h-8 text-sky-400 absolute animate-pulse"></i>
+      </div>
+      
+      <div class="space-y-2">
+        <h3 class="text-lg font-bold text-slate-900 font-heading tracking-wide">AEGIS AI Engine</h3>
+        <p class="text-xs text-sky-400 uppercase font-bold tracking-wider">Analyzing study variables...</p>
+        <p id="loader-details-text" class="text-[11px] text-slate-500 font-mono">Scanning paragraph matrices...</p>
+      </div>
+
+      <!-- Linear progress bar -->
+      <div class="w-full h-1.5 bg-sky-950 rounded-full overflow-hidden">
+        <div id="loader-progress-bar" class="h-full bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-400 transition-all duration-350" style="width: 0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic scripts imports -->
+  <script src="app.js?v=1.0.5"></script>
+  <script>
+    // Initialize Lucide icons on page load
+    lucide.createIcons();
+  </script>
+</body>
+</html>

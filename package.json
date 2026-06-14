@@ -1,0 +1,20 @@
+{
+  "name": "medical-research-aggregator",
+  "version": "1.0.0",
+  "description": "Client-side medical abstract parsing dashboard styled with Tailwind CSS v4.",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@google/genai": "^2.8.0",
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
